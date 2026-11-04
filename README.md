@@ -18,6 +18,18 @@ npm run build && npm start
 
 Pendiente: refresh token (hoy solo se guarda el access token en cookie httpOnly).
 
+## Pruebas
+
+Vitest + Testing Library (jsdom). Los tests viven junto al código (`*.test.ts(x)`).
+
+```bash
+npm test          # una corrida
+npm run test:watch
+```
+
+`server-only` se resuelve a un módulo vacío (`test/server-only.ts`); `next/navigation`
+y `lib/api` se mockean con `vi.mock` en cada test.
+
 ## Learn More
 
 To learn more about Next.js, take a look at the following resources:
