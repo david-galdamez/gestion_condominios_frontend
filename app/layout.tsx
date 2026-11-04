@@ -13,8 +13,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "SI Boilerplate",
-  description: "Boilerplate con login básico",
+  title: "Condominios",
+  description: "Gestión de condominios",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
