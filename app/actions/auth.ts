@@ -1,7 +1,7 @@
 "use server";
 
 import { redirect } from "next/navigation";
-import { createSession, deleteSession } from "@/lib/session";
+import { createSession, deleteSession, type SessionUser } from "@/lib/session";
 
 export type LoginState = {
   error?: string;
@@ -10,8 +10,8 @@ export type LoginState = {
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-// Llama a la API de autenticación. Devuelve el token si las credenciales son
-// válidas, o null si la API responde 401/403.
+// Llama a la API de autenticación. Devuelve token y usuario si las
+// credenciales son válidas, o null si la API responde 401/403.
 async function authenticate(email: string, password: string) {
   const apiUrl = process.env.API_URL;
   if (!apiUrl) {
@@ -32,14 +32,19 @@ async function authenticate(email: string, password: string) {
     throw new Error(`auth/login respondió ${res.status}`);
   }
 
-  // Ajustar al formato de respuesta real de la API.
   const data = await res.json();
-  const token: string | undefined =
-    data.token ?? data.accessToken ?? data.access_token;
-  if (!token) {
-    throw new Error("La respuesta de auth/login no incluye un token.");
+  const token: string | undefined = data.accessToken;
+  const u = data.user;
+  if (!token || !u) {
+    throw new Error("La respuesta de auth/login no incluye token o usuario.");
   }
-  return token;
+  const user: SessionUser = {
+    id: String(u.id),
+    email: u.email,
+    nombre: u.nombre,
+    rol: u.rol,
+  };
+  return { token, user };
 }
 
 export async function login(
@@ -56,18 +61,18 @@ export async function login(
     return { error: "Ingresa un correo válido.", email };
   }
 
-  let token: string | null;
+  let result: Awaited<ReturnType<typeof authenticate>>;
   try {
-    token = await authenticate(email, password);
+    result = await authenticate(email, password);
   } catch (error) {
     console.error("Error al iniciar sesión:", error);
     return { error: "No se pudo iniciar sesión. Intenta más tarde.", email };
   }
-  if (!token) {
+  if (!result) {
     return { error: "Correo o contraseña incorrectos.", email };
   }
 
-  await createSession(token);
+  await createSession(result.token, result.user);
   redirect("/");
 }
 

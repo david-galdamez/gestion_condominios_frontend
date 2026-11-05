@@ -1,24 +1,34 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-## Getting Started
+## Configuración
 
-First, run the development server:
+Copia `.env.example` a `.env`:
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+```
+API_URL=http://localhost:3000/api/v1
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+El backend (NestJS) corre en el puerto 3000 con prefijo `/api/v1`; el frontend
+se fija en el puerto **3001**.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+npm run dev    # http://localhost:3001
+npm run build && npm start
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Pendiente: refresh token (hoy solo se guarda el access token en cookie httpOnly).
+
+## Pruebas
+
+Vitest + Testing Library (jsdom). Los tests viven junto al código (`*.test.ts(x)`).
+
+```bash
+npm test          # una corrida
+npm run test:watch
+```
+
+`server-only` se resuelve a un módulo vacío (`test/server-only.ts`); `next/navigation`
+y `lib/api` se mockean con `vi.mock` en cada test.
 
 ## Learn More
 
