@@ -13,6 +13,7 @@ const ROL_LABEL: Record<Rol, string> = {
 const MENU: { href: string; label: string; roles?: Rol[] }[] = [
   { href: "/", label: "Inicio" },
   { href: "/estado-cuenta", label: "Estado de cuenta", roles: ["RESIDENTE"] },
+  { href: "/visitas", label: "Visitas", roles: ["RESIDENTE"] },
 ];
 
 export default async function PrivadoLayout({
